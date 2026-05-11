@@ -1,0 +1,14 @@
+{
+  "name": "scs-booth-demo",
+  "private": true,
+  "type": "module",
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev:backend": "bun run --cwd apps/backend dev",
+    "dev:login": "bun run --cwd apps/participant-login dev",
+    "dev:viz": "bun run --cwd apps/visualizer dev",
+    "dev": "echo 'Run dev:backend, dev:login, dev:viz in separate terminals'",
+    "build": "bun run --cwd apps/participant-login build && bun run --cwd apps/visualizer build",
+    "demo": "bun run --cwd apps/backend start"
+  }
+}

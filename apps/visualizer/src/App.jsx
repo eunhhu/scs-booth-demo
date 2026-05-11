@@ -6,14 +6,27 @@ function App() {
     let canvasRef;
     let ws;
     onMount(async () => {
-        const backend = 'http://localhost:8080';
+        const urlParams = new URLSearchParams(window.location.search);
+        const backendParam = urlParams.get('backend');
+        const host = window.location.hostname;
+        const backend = backendParam || import.meta.env.VITE_BACKEND_URL || `http://${host}:3080`;
         try {
             const info = await fetch(`${backend}/api/server-info`).then((r) => r.json());
             setServerInfo(info);
             if (canvasRef) {
                 QRCode.toCanvas(canvasRef, info.loginUrl, { width: 240, margin: 2 });
             }
-            ws = new WebSocket(info.wsUrl);
+            let wsUrl = info.wsUrl;
+            if (!wsUrl.includes('://')) {
+                const isHttps = backend.startsWith('https');
+                const wsScheme = isHttps ? 'wss' : 'ws';
+                const domain = backend.replace(/^https?:\/\//, '');
+                wsUrl = `${wsScheme}://${domain}/ws`;
+            }
+            else if (backend.startsWith('https') && wsUrl.startsWith('ws://')) {
+                wsUrl = wsUrl.replace('ws://', 'wss://');
+            }
+            ws = new WebSocket(wsUrl);
             ws.onmessage = (event) => {
                 const msg = JSON.parse(event.data);
                 if (msg.type === 'login') {

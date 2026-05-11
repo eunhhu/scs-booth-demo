@@ -15,7 +15,7 @@ function getLocalIP(): string {
 const clients = new Set<WebSocket>()
 
 const server = Bun.serve({
-  port: 8080,
+  port: 3080,
   async fetch(req, server) {
     const url = new URL(req.url)
 
@@ -64,11 +64,35 @@ const server = Bun.serve({
 
     if (url.pathname === '/api/server-info') {
       const ip = getLocalIP()
+      
+      const host = req.headers.get('host') || `${ip}:3080`
+      const isHttps = req.headers.get('x-forwarded-proto') === 'https' || 
+                      host.includes('trycloudflare.com') || 
+                      host.includes('ngrok.io') ||
+                      process.env.HTTPS === 'true'
+                      
+      const scheme = isHttps ? 'https' : 'http'
+      const wsScheme = isHttps ? 'wss' : 'ws'
+      
+      const backendUrl = process.env.BACKEND_URL || `${scheme}://${host}`
+      let loginUrl = process.env.LOGIN_URL || `http://${ip}:3000`
+      const wsUrl = process.env.WS_URL || `${wsScheme}://${host}/ws`
+
+      try {
+        const loginUrlObj = new URL(loginUrl)
+        if (!loginUrlObj.searchParams.has('backend')) {
+          loginUrlObj.searchParams.set('backend', backendUrl)
+        }
+        loginUrl = loginUrlObj.toString()
+      } catch (e) {
+      }
+
       return new Response(
         JSON.stringify({
           ip,
-          loginUrl: `http://${ip}:3000`,
-          wsUrl: `ws://${ip}:8080/ws`
+          loginUrl,
+          wsUrl,
+          backendUrl
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )

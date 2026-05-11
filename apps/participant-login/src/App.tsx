@@ -10,7 +10,7 @@ function App() {
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault()
-    
+
     if (!username() || !password()) {
       setIsError(true)
       setStatus('아이디와 비밀번호를 모두 입력해주세요.')
@@ -22,17 +22,18 @@ function App() {
     setIsError(false)
 
     try {
-      // 휴대폰(외부망)에서 접속할 경우를 대비하여 현재 페이지의 호스트 주소를 사용합니다.
-      // localhost로 접속했다면 localhost, IP로 접속했다면 해당 IP로 백엔드 API를 호출합니다.
+      const urlParams = new URLSearchParams(window.location.search)
+      const backendParam = urlParams.get('backend')
       const host = window.location.hostname
-      const targetServer = `http://${host}:8080`
+      
+      const targetServer = backendParam || import.meta.env.VITE_BACKEND_URL || `http://${host}:3080`
 
       const res = await fetch(`${targetServer}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: username(), password: password() })
       })
-      
+
       if (res.ok) {
         setIsError(false)
         setStatus('✅ 전송 완료! 모니터 화면의 와이어샤크를 확인하세요.')
@@ -76,7 +77,7 @@ function App() {
               autocomplete="off"
             />
           </div>
-          
+
           <div class="input-group">
             <label>비밀번호</label>
             <input

@@ -30,8 +30,9 @@ bun run dev:viz
 
 > 로컬 실행 시 접속 주소:
 > - **Visualizer 모니터 (시연용 PC 화면)**: `http://localhost:3001`
-> - **참가자 로그인 (스마트폰 등)**: `http://localhost:3000` (비주얼라이저 화면의 QR 코드를 찍어서 접속 가능)
-> - **백엔드 서버**: `http://localhost:3080`
+> - **참가자 로그인 (시연용 PC 로컬 확인)**: `http://localhost:3000`
+> - **참가자 로그인 (스마트폰)**: 비주얼라이저 화면의 QR 코드로 접속 (`http://<시연용 PC LAN IP>:3000?...`)
+> - **백엔드 서버**: `http://localhost:3080` / 스마트폰용 QR에는 `http://<시연용 PC LAN IP>:3080`이 자동 포함됩니다.
 
 ## 🌍 외부 접속 환경 구성 (Cloudflare Tunnel, ngrok 등)
 

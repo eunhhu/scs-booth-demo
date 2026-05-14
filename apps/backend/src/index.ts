@@ -12,9 +12,47 @@ function getLocalIP(): string {
   return '127.0.0.1'
 }
 
+function getRequestHost(hostHeader: string | null, localIp: string): string {
+  const fallback = `${localIp}:3080`
+  if (!hostHeader) return fallback
+
+  try {
+    const url = new URL(`http://${hostHeader}`)
+    const hostname = url.hostname.replace(/^\[|\]$/g, '').toLowerCase()
+    const port = url.port
+    const isLocalhost =
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname === '::1' ||
+      hostname === '0.0.0.0'
+
+    if (isLocalhost) {
+      return `${localIp}:${port || '3080'}`
+    }
+
+    return port ? `${url.hostname}:${port}` : url.hostname
+  } catch {
+    return fallback
+  }
+}
+
+function isHttpsRequest(req: Request, host: string): boolean {
+  const forwardedProto = req.headers.get('x-forwarded-proto')?.split(',')[0]?.trim()
+
+  return (
+    forwardedProto === 'https' ||
+    host.includes('trycloudflare.com') ||
+    host.includes('ngrok.io') ||
+    host.includes('ngrok.app') ||
+    host.includes('ngrok-free.app') ||
+    process.env.HTTPS === 'true'
+  )
+}
+
 const clients = new Set<WebSocket>()
 
 const server = Bun.serve({
+  hostname: '0.0.0.0',
   port: 3080,
   async fetch(req, server) {
     const url = new URL(req.url)
@@ -64,16 +102,12 @@ const server = Bun.serve({
 
     if (url.pathname === '/api/server-info') {
       const ip = getLocalIP()
-      
-      const host = req.headers.get('host') || `${ip}:3080`
-      const isHttps = req.headers.get('x-forwarded-proto') === 'https' || 
-                      host.includes('trycloudflare.com') || 
-                      host.includes('ngrok.io') ||
-                      process.env.HTTPS === 'true'
-                      
+      const host = getRequestHost(req.headers.get('host'), ip)
+      const isHttps = isHttpsRequest(req, host)
+
       const scheme = isHttps ? 'https' : 'http'
       const wsScheme = isHttps ? 'wss' : 'ws'
-      
+
       const backendUrl = process.env.BACKEND_URL || `${scheme}://${host}`
       let loginUrl = process.env.LOGIN_URL || `http://${ip}:3000`
       const wsUrl = process.env.WS_URL || `${wsScheme}://${host}/ws`
@@ -84,7 +118,7 @@ const server = Bun.serve({
           loginUrlObj.searchParams.set('backend', backendUrl)
         }
         loginUrl = loginUrlObj.toString()
-      } catch (e) {
+      } catch {
       }
 
       return new Response(
@@ -112,4 +146,5 @@ const server = Bun.serve({
 })
 
 console.log(`Backend running at http://localhost:${server.port}`)
+console.log(`LAN backend URL: http://${getLocalIP()}:${server.port}`)
 console.log(`WebSocket endpoint: ws://localhost:${server.port}/ws`)

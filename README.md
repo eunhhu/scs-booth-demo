@@ -82,3 +82,26 @@ bun run build
 # 백엔드 직접 실행
 bun run demo
 ```
+
+## 🔒 외부 도메인 운영 설정
+
+브라우저 웹앱은 표준 Web API만으로 SSL pinning을 직접 강제할 수 없습니다. 외부 운영에서는 HTTPS/WSS 도메인, HSTS, CORS allowlist, Visualizer WebSocket token으로 라우트를 고정합니다. 나중에 네이티브 앱 또는 WebView 래퍼를 붙이면 그 계층에서 인증서 pinning을 적용합니다.
+
+```bash
+PUBLIC_BACKEND_URL=https://api.example.com \
+PUBLIC_LOGIN_URL=https://login.example.com \
+PUBLIC_WS_URL=wss://api.example.com/ws \
+ALLOWED_ORIGINS=https://login.example.com,https://viz.example.com \
+VISUALIZER_TOKEN=change-this-monitor-token \
+bun run demo
+```
+
+Visualizer를 빌드할 때 같은 token을 넘기면 `/ws?token=...`으로 연결합니다.
+
+```bash
+VITE_BACKEND_URL=https://api.example.com \
+VITE_VISUALIZER_TOKEN=change-this-monitor-token \
+bun run --cwd apps/visualizer build
+```
+
+참가자 앱은 `backend` 쿼리 파라미터 또는 `VITE_BACKEND_URL`로 백엔드 라우트를 고정합니다.

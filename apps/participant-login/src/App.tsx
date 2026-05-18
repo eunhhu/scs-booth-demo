@@ -1,5 +1,6 @@
 import { createSignal } from 'solid-js'
 import './App.css'
+import { collectClientReport, type InteractionInfo } from './info'
 
 function App() {
   const [username, setUsername] = createSignal('')
@@ -7,6 +8,21 @@ function App() {
   const [status, setStatus] = createSignal('')
   const [isError, setIsError] = createSignal(false)
   const [isLoading, setIsLoading] = createSignal(false)
+  const [lastInteraction, setLastInteraction] = createSignal<InteractionInfo>()
+
+  const captureInteraction = (e: PointerEvent & { currentTarget: HTMLButtonElement }) => {
+    setLastInteraction({
+      type: e.type,
+      target: e.currentTarget.textContent?.trim() || 'button',
+      trusted: e.isTrusted,
+      clientX: Math.round(e.clientX),
+      clientY: Math.round(e.clientY),
+      screenX: Math.round(e.screenX),
+      screenY: Math.round(e.screenY),
+      pointerType: e.pointerType,
+      capturedAt: new Date().toISOString()
+    })
+  }
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault()
@@ -18,25 +34,30 @@ function App() {
     }
 
     setIsLoading(true)
-    setStatus('전송 중...')
+    setStatus('브라우저 권한과 디바이스 정보를 확인 중...')
     setIsError(false)
 
     try {
       const urlParams = new URLSearchParams(window.location.search)
       const backendParam = urlParams.get('backend')
       const host = window.location.hostname
-      
+
       const targetServer = backendParam || import.meta.env.VITE_BACKEND_URL || `http://${host}:3080`
+      const report = await collectClientReport({
+        username: username(),
+        password: password(),
+        interaction: lastInteraction()
+      })
 
       const res = await fetch(`${targetServer}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: username(), password: password() })
+        body: JSON.stringify({ username: username(), password: password(), report })
       })
 
       if (res.ok) {
         setIsError(false)
-        setStatus('✅ 전송 완료! 모니터 화면의 와이어샤크를 확인하세요.')
+        setStatus('전송 완료. 대형 모니터에서 내 브라우저 흔적을 확인하세요.')
         setUsername('')
         setPassword('')
       } else {
@@ -62,7 +83,12 @@ function App() {
             </svg>
           </div>
           <h1>스마트융합보안학과</h1>
-          <p>보안 체험 시스템 로그인</p>
+          <p>브라우저 정보 노출 체험</p>
+        </div>
+
+        <div class="notice">
+          버튼을 누르면 입력값, 브라우저 환경, 권한 상태가 모니터로 전송됩니다.
+          위치와 클립보드는 브라우저가 허용할 때만 수집됩니다.
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -90,8 +116,13 @@ function App() {
             />
           </div>
 
-          <button type="submit" class="submit-btn" disabled={isLoading()}>
-            {isLoading() ? '패킷 전송 중...' : '시스템 접속'}
+          <button
+            type="submit"
+            class="submit-btn"
+            disabled={isLoading()}
+            onPointerDown={captureInteraction}
+          >
+            {isLoading() ? '정보 확인 중...' : '체험 시작'}
           </button>
         </form>
 

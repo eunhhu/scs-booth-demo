@@ -220,9 +220,6 @@ body {
 }
 
 @media (max-width: 480px) {
-  body {
-    align-items: flex-start;
-  }
 
   .login-container {
     max-width: none;

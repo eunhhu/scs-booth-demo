@@ -22,6 +22,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 * {
@@ -216,4 +217,103 @@ body {
   font-size: 0.78rem;
   line-height: 1.4;
   text-align: center;
+}
+
+@media (max-width: 480px) {
+  body {
+    align-items: flex-start;
+  }
+
+  .login-container {
+    max-width: none;
+    padding: max(1.35rem, env(safe-area-inset-top)) 1rem max(1.5rem, env(safe-area-inset-bottom));
+  }
+
+  .header {
+    margin-bottom: 1.45rem;
+  }
+
+  .header h1 {
+    font-size: clamp(2rem, 9vw, 2.65rem);
+    letter-spacing: -0.075em;
+    word-break: keep-all;
+  }
+
+  .header p {
+    font-size: 0.9rem;
+  }
+
+  .demo-label {
+    margin-bottom: 0.8rem;
+    font-size: 0.76rem;
+  }
+
+  .notice {
+    padding: 0.82rem 0.9rem;
+    font-size: 0.82rem;
+  }
+
+  .input-group input {
+    min-height: 58px;
+    padding: 0.95rem 1rem;
+    font-size: 1rem;
+  }
+
+  .keep-login {
+    margin: 0.8rem 0 1.15rem;
+    font-size: 0.88rem;
+  }
+
+  .submit-btn {
+    min-height: 54px;
+    font-size: 1rem;
+  }
+
+  .helper-links {
+    flex-wrap: wrap;
+    row-gap: 0.45rem;
+    font-size: 0.82rem;
+  }
+
+  .safe-caption {
+    font-size: 0.74rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .login-container {
+    padding-inline: 0.82rem;
+  }
+
+  .header h1 {
+    font-size: 1.82rem;
+    letter-spacing: -0.065em;
+  }
+
+  .input-group input {
+    min-height: 54px;
+  }
+
+  .helper-links span + span::before {
+    margin: 0 0.55rem;
+  }
+}
+
+@media (max-height: 680px) and (max-width: 480px) {
+  .login-container {
+    padding-block: 0.9rem 1rem;
+  }
+
+  .header {
+    margin-bottom: 1rem;
+  }
+
+  .notice {
+    margin-bottom: 0.7rem;
+    padding-block: 0.72rem;
+  }
+
+  .safe-caption {
+    margin-top: 0.8rem;
+  }
 }

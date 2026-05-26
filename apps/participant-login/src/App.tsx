@@ -77,7 +77,7 @@ function App() {
       <div class="login-card">
         <div class="header">
           <div class="demo-label">보안 체험용 모의 로그인</div>
-          <h1>네이버 쇼핑</h1>
+          <h1>NAVER</h1>
           <p>로그인하여 계속 구매하기</p>
         </div>
 

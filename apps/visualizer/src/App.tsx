@@ -290,7 +290,6 @@ function EventItem(props: { capture: Credential; active: boolean }) {
 }
 
 function App() {
-  const [serverInfo, setServerInfo] = createSignal<ServerInfo | null>(null)
   const [captures, setCaptures] = createSignal<Credential[]>([])
   const [connectionStatus, setConnectionStatus] = createSignal('백엔드 연결 중')
   const [isConnectionError, setIsConnectionError] = createSignal(false)
@@ -326,10 +325,9 @@ function App() {
       }
 
       const info = await res.json() as ServerInfo
-      setServerInfo(info)
       if (canvasRef) {
         QRCode.toCanvas(canvasRef, info.loginUrl, {
-          width: 260,
+          width: 336,
           margin: 1,
           color: {
             dark: '#031016',
@@ -498,10 +496,12 @@ function App() {
 
       <section class="top-grid">
         <article class="qr-panel">
-          <canvas ref={(el) => (canvasRef = el)} />
-          <div>
+          <canvas ref={(el) => (canvasRef = el)} role="img" aria-label="참가자 접속 QR 코드" />
+          <div class="qr-copy">
             <p class="panel-label">참가자 접속 QR</p>
-            <strong>{serverInfo()?.loginUrl ?? '백엔드 연결 대기 중'}</strong>
+            <strong>남은 에어팟 상품 2개!</strong>
+            <span>QR을 스캔해 가상 쇼핑몰 보안 체험을 시작하세요.</span>
+            <small>보안 체험용 모의 페이지입니다. 실제 계정 정보는 입력하지 마세요.</small>
           </div>
         </article>
 

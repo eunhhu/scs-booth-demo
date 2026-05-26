@@ -1,25 +1,22 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
 :root {
-  --bg-color: #0b0f19;
-  --panel: #151922;
-  --panel-strong: #1c2430;
-  --text-main: #f8fafc;
-  --text-muted: #9aa7b7;
-  --accent: #14b8a6;
-  --accent-hover: #0f9488;
+  --bg-color: #f5f6f8;
+  --panel: #ffffff;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --accent: #03c75a;
+  --accent-hover: #02b350;
   --danger: #ef4444;
-  --success: #22c55e;
-  --line: rgba(255, 255, 255, 0.08);
+  --success: #059669;
+  --line: #dce1e7;
 }
 
 body {
   margin: 0;
   padding: 0;
   font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(20, 184, 166, 0.22), transparent 36rem),
-    var(--bg-color);
+  background: var(--bg-color);
   color: var(--text-main);
   display: flex;
   justify-content: center;
@@ -33,28 +30,30 @@ body {
 
 .login-container {
   width: 100%;
-  max-width: 440px;
-  padding: 1.25rem;
+  max-width: 520px;
+  padding: 2rem 1.25rem;
 }
 
 .login-card {
-  background: linear-gradient(180deg, var(--panel), #10151f);
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-  border: 1px solid var(--line);
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  border: 0;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .header h1 {
-  margin: 0 0 0.5rem 0;
-  font-size: clamp(1.35rem, 6vw, 1.7rem);
-  font-weight: 800;
-  letter-spacing: 0;
+  margin: 0 0 0.6rem 0;
+  color: var(--accent);
+  font-size: clamp(2.25rem, 10vw, 3.4rem);
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  line-height: 1;
 }
 
 .header p {
@@ -63,49 +62,86 @@ body {
   color: var(--text-muted);
 }
 
-.notice {
-  margin-bottom: 1.5rem;
-  padding: 0.95rem 1rem;
-  border-radius: 8px;
-  background: rgba(20, 184, 166, 0.09);
-  color: #c7f9f1;
-  border: 1px solid rgba(20, 184, 166, 0.24);
-  font-size: 0.9rem;
+.demo-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  padding: 0.38rem 0.78rem;
+  border-radius: 999px;
+  color: #047857;
+  background: #dcfce7;
+  font-size: 0.8rem;
+  font-weight: 800;
 }
 
-.input-group {
-  margin-bottom: 1.2rem;
+.notice {
+  margin-bottom: 0.9rem;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.login-fieldset {
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid #dadde2;
+  border-radius: 8px;
 }
 
 .input-group label {
-  display: block;
-  margin-bottom: 0.45rem;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #cbd5e1;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 .input-group input {
   width: 100%;
-  min-height: 52px;
-  padding: 0.95rem 1rem;
-  border-radius: 8px;
-  background-color: rgba(0, 0, 0, 0.18);
-  border: 1px solid var(--line);
+  min-height: 60px;
+  padding: 1rem 1.1rem;
+  border-radius: 0;
+  background-color: #ffffff;
+  border: 0;
   color: var(--text-main);
-  font-size: 1rem;
+  font-size: 1.04rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
+.input-group + .input-group {
+  border-top: 1px solid #edf0f3;
+}
+
 .input-group input::placeholder {
-  color: #64748b;
+  color: #9ca3af;
 }
 
 .input-group input:focus {
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.18);
-  background-color: rgba(0, 0, 0, 0.26);
+  box-shadow: inset 0 0 0 2px var(--accent);
+  background-color: #ffffff;
+}
+
+.keep-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.9rem 0 1.35rem;
+  color: #4b5563;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.keep-login input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
 }
 
 .submit-btn {
@@ -114,14 +150,14 @@ body {
   padding: 1rem;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent), #38bdf8);
-  color: #031016;
-  font-size: 1rem;
-  font-weight: 800;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 900;
   cursor: pointer;
   transition: transform 0.1s, filter 0.2s;
-  margin-top: 0.25rem;
-  box-shadow: 0 12px 30px rgba(20, 184, 166, 0.24);
+  margin-top: 0;
+  box-shadow: 0 12px 30px rgba(3, 199, 90, 0.24);
 }
 
 .submit-btn:hover {
@@ -143,26 +179,41 @@ body {
   border-radius: 8px;
   font-size: 0.92rem;
   text-align: center;
-  background-color: rgba(34, 197, 94, 0.1);
+  background-color: rgba(34, 197, 94, 0.08);
   color: var(--success);
   border: 1px solid rgba(34, 197, 94, 0.22);
 }
 
 .status-message.error {
   background-color: rgba(239, 68, 68, 0.1);
-  color: #fca5a5;
+  color: #b91c1c;
   border: 1px solid rgba(239, 68, 68, 0.26);
 }
 
-.logo-icon {
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 1.1rem;
-  background: var(--panel-strong);
-  border-radius: 8px;
+.helper-links {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--line);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  gap: 0;
+  margin-top: 1.15rem;
+  color: #6b7280;
+  font-size: 0.88rem;
+}
+
+.helper-links span + span::before {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 11px;
+  margin: 0 0.75rem;
+  background: #d1d5db;
+  vertical-align: -1px;
+}
+
+.safe-caption {
+  margin: 1rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  text-align: center;
 }

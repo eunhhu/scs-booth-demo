@@ -76,45 +76,49 @@ function App() {
     <div class="login-container">
       <div class="login-card">
         <div class="header">
-          <div class="logo-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-          </div>
+          <div class="demo-label">보안 체험용 모의 로그인</div>
           <h1>스마트융합보안학과</h1>
-          <p>브라우저 정보 노출 체험</p>
+          <p>학과 포털 로그인 화면 예시</p>
         </div>
 
         <div class="notice">
-          버튼을 누르면 입력값, 브라우저 환경, 권한 상태가 모니터로 전송됩니다.
-          위치와 클립보드는 브라우저가 허용할 때만 수집됩니다.
+          실제 포털/쇼핑몰 서비스가 아닙니다. 체험용 아이디와 비밀번호만 입력하세요.
+          입력값과 브라우저 환경은 부스 모니터에 표시됩니다.
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div class="input-group">
-            <label>아이디</label>
-            <input
-              type="text"
-              placeholder="아무 아이디나 입력해보세요"
-              value={username()}
-              onInput={(e) => setUsername(e.currentTarget.value)}
-              disabled={isLoading()}
-              autocomplete="off"
-            />
+          <div class="login-fieldset">
+            <div class="input-group">
+              <label for="demo-username">아이디</label>
+              <input
+                id="demo-username"
+                type="text"
+                placeholder="아이디"
+                value={username()}
+                onInput={(e) => setUsername(e.currentTarget.value)}
+                disabled={isLoading()}
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="demo-password">비밀번호</label>
+              <input
+                id="demo-password"
+                type="password"
+                placeholder="비밀번호"
+                value={password()}
+                onInput={(e) => setPassword(e.currentTarget.value)}
+                disabled={isLoading()}
+                autocomplete="off"
+              />
+            </div>
           </div>
 
-          <div class="input-group">
-            <label>비밀번호</label>
-            <input
-              type="password"
-              placeholder="아무 비밀번호나 입력해보세요"
-              value={password()}
-              onInput={(e) => setPassword(e.currentTarget.value)}
-              disabled={isLoading()}
-              autocomplete="off"
-            />
-          </div>
+          <label class="keep-login">
+            <input type="checkbox" disabled={isLoading()} />
+            <span>로그인 상태 유지</span>
+          </label>
 
           <button
             type="submit"
@@ -122,9 +126,17 @@ function App() {
             disabled={isLoading()}
             onPointerDown={captureInteraction}
           >
-            {isLoading() ? '정보 확인 중...' : '체험 시작'}
+            {isLoading() ? '로그인 확인 중...' : '로그인'}
           </button>
         </form>
+
+        <nav class="helper-links" aria-label="체험용 로그인 도움말">
+          <span>비밀번호 찾기</span>
+          <span>아이디 찾기</span>
+          <span>체험 안내</span>
+        </nav>
+
+        <p class="safe-caption">스마트융합보안학과 보안 체험 페이지입니다. 실제 계정 정보는 입력하지 마세요.</p>
 
         {status() && (
           <div class={`status-message ${isError() ? 'error' : ''}`}>

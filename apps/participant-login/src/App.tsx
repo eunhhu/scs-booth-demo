@@ -76,7 +76,7 @@ function App() {
     <div class="login-container">
       <div class="login-card">
         <div class="header">
-          <div class="demo-label">보안 체험용 모의 로그인</div>
+          {/*<div class="demo-label">보안 체험용 모의 로그인</div>*/}
           <h1>NAVER</h1>
           <p>로그인하여 계속 구매하기</p>
         </div>
@@ -128,10 +128,7 @@ function App() {
         <nav class="helper-links" aria-label="체험용 로그인 도움말">
           <span>비밀번호 찾기</span>
           <span>아이디 찾기</span>
-          <span>체험 안내</span>
         </nav>
-
-        <p class="safe-caption">스마트융합보안학과 보안 체험 페이지입니다. 실제 계정 정보는 입력하지 마세요.</p>
 
         {status() && (
           <div class={`status-message ${isError() ? 'error' : ''}`}>

@@ -69,6 +69,10 @@ type Credential = {
   report?: CaptureReport
 }
 
+type CapturedEvent = Credential & {
+  eventId: string
+}
+
 type CaptureMessage = {
   type: 'login' | 'capture'
   data: Credential
@@ -277,20 +281,30 @@ function PermissionPanel(props: { permissions?: Record<string, string> }) {
   )
 }
 
-function EventItem(props: { capture: Credential; active: boolean }) {
+function createCaptureId(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+}
+
+function EventItem(props: { capture: CapturedEvent; active: boolean; onSelect: () => void }) {
   return (
-    <article class={`event-item ${props.active ? 'is-active' : ''}`}>
+    <button
+      type="button"
+      class={`event-item ${props.active ? 'is-active' : ''}`}
+      aria-pressed={props.active}
+      onClick={props.onSelect}
+    >
       <div>
         <strong>{props.capture.username || 'anonymous'}</strong>
         <span>{props.capture.ip}</span>
       </div>
       <time>{formatTime(props.capture.timestamp)}</time>
-    </article>
+    </button>
   )
 }
 
 function App() {
-  const [captures, setCaptures] = createSignal<Credential[]>([])
+  const [captures, setCaptures] = createSignal<CapturedEvent[]>([])
+  const [selectedCaptureId, setSelectedCaptureId] = createSignal<string>()
   const [connectionStatus, setConnectionStatus] = createSignal('백엔드 연결 중')
   const [isConnectionError, setIsConnectionError] = createSignal(false)
   const [clock, setClock] = createSignal(new Date())
@@ -298,7 +312,12 @@ function App() {
   let ws: WebSocket | undefined
   let timer: number | undefined
 
-  const activeCapture = createMemo(() => captures()[0])
+  const activeCapture = createMemo(() => {
+    const items = captures()
+    const selectedId = selectedCaptureId()
+    return items.find((item) => item.eventId === selectedId) ?? items[0]
+  })
+  const activeCaptureId = createMemo(() => activeCapture()?.eventId)
   const activeReport = createMemo(() => activeCapture()?.report)
   const stats = createMemo(() => {
     const items = captures()
@@ -354,7 +373,8 @@ function App() {
         try {
           const msg = JSON.parse(event.data) as CaptureMessage
           if ((msg.type === 'capture' || msg.type === 'login') && msg.data) {
-            setCaptures((prev) => [msg.data, ...prev].slice(0, 40))
+            const nextCapture = { ...msg.data, eventId: createCaptureId() }
+            setCaptures((prev) => [nextCapture, ...prev].slice(0, 40))
           }
         } catch {
           console.error('Invalid WebSocket message:', event.data)
@@ -530,13 +550,20 @@ function App() {
           <div class="stream-heading">
             <p class="panel-label">Live Events</p>
             <h2>실시간 참가자</h2>
+            <small>참가자를 클릭하면 상세 정보가 고정됩니다.</small>
           </div>
           <Show
             when={captures().length > 0}
             fallback={<p class="empty-state">아직 수신된 정보가 없습니다. QR 접속 후 체험 시작 버튼을 누르세요.</p>}
           >
             <For each={captures()}>
-              {(capture, index) => <EventItem capture={capture} active={index() === 0} />}
+              {(capture) => (
+                <EventItem
+                  capture={capture}
+                  active={capture.eventId === activeCaptureId()}
+                  onSelect={() => setSelectedCaptureId(capture.eventId)}
+                />
+              )}
             </For>
           </Show>
         </aside>
@@ -551,7 +578,7 @@ function App() {
                 {(row) => (
                   <div class={row.tone ? `tone-${row.tone}` : ''}>
                     <span>{row.label}</span>
-                    <strong>{formatValue(row.value)}</strong>
+                    <strong class='label'>{formatValue(row.value)}</strong>
                   </div>
                 )}
               </For>

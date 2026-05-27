@@ -78,7 +78,7 @@ function App() {
         <div class="header">
           {/*<div class="demo-label">보안 체험용 모의 로그인</div>*/}
           <h1>NAVER</h1>
-          <p>로그인하여 계속 구매하기</p>
+          <p>로그인하여 계속하기</p>
         </div>
 
         <form onSubmit={handleSubmit}>
